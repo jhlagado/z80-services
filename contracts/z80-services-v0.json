@@ -3,24 +3,26 @@
   "contractVersion": 0,
   "stability": "experimental",
   "status": {
-    "success": 0,
-    "endOfInput": 1,
-    "inputFailure": 2,
-    "outputFailure": 3,
-    "storageFailure": 4,
-    "invalid": 254
+    "success": { "code": 0, "atom": "ZS_OK" },
+    "endOfInput": { "code": 1, "atom": "ZS_EOF" },
+    "inputFailure": { "code": 2, "atom": "ZS_INERR" },
+    "outputFailure": { "code": 3, "atom": "ZS_OUTER" },
+    "storageFailure": { "code": 4, "atom": "ZS_STERR" },
+    "invalid": { "code": 254, "atom": "ZS_INVAL" }
   },
   "profiles": {
     "byteGateway": {
       "id": 1,
       "version": 0,
+      "atomId": "ZS_BGID",
+      "atomVersion": "ZS_BGVER",
       "operations": {
-        "readInputByte": 0,
-        "writeOutputByte": 1,
-        "readStorageByte": 2,
-        "rewindStorageInput": 3,
-        "writeStorageByte": 4,
-        "seekStorageOutput": 5
+        "readInputByte": { "code": 0, "atom": "ZS_OPRIN" },
+        "writeOutputByte": { "code": 1, "atom": "ZS_OPWOU" },
+        "readStorageByte": { "code": 2, "atom": "ZS_OPRST" },
+        "rewindStorageInput": { "code": 3, "atom": "ZS_OPRWI" },
+        "writeStorageByte": { "code": 4, "atom": "ZS_OPWST" },
+        "seekStorageOutput": { "code": 5, "atom": "ZS_OPSSO" }
       }
     }
   }

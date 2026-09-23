@@ -1,0 +1,336 @@
+{
+  "profile": "byteGateway",
+  "version": 0,
+  "vectors": [
+    {
+      "name": "standard-input-and-output",
+      "initial": {
+        "input": [65],
+        "outputCapacity": 1
+      },
+      "steps": [
+        {
+          "operation": "readInputByte",
+          "result": { "status": 0, "value": 65 },
+          "state": {
+            "inputOffset": 1,
+            "output": [],
+            "storageInputOffset": 0,
+            "storageOutputOffset": 0,
+            "storageOutput": []
+          }
+        },
+        {
+          "operation": "readInputByte",
+          "result": { "status": 1 },
+          "state": {
+            "inputOffset": 1,
+            "output": [],
+            "storageInputOffset": 0,
+            "storageOutputOffset": 0,
+            "storageOutput": []
+          }
+        },
+        {
+          "operation": "writeOutputByte",
+          "arguments": { "value": 85 },
+          "result": { "status": 0 },
+          "state": {
+            "inputOffset": 1,
+            "output": [85],
+            "storageInputOffset": 0,
+            "storageOutputOffset": 0,
+            "storageOutput": []
+          }
+        },
+        {
+          "operation": "writeOutputByte",
+          "arguments": { "value": 86 },
+          "result": { "status": 3 },
+          "state": {
+            "inputOffset": 1,
+            "output": [85],
+            "storageInputOffset": 0,
+            "storageOutputOffset": 0,
+            "storageOutput": []
+          }
+        }
+      ]
+    },
+    {
+      "name": "storage-read-rewind-seek-and-write",
+      "initial": {
+        "storageInput": [16],
+        "storageOutput": [1, 2],
+        "storageOutputCapacity": 3
+      },
+      "steps": [
+        {
+          "operation": "readStorageByte",
+          "result": { "status": 0, "value": 16 },
+          "state": {
+            "inputOffset": 0,
+            "output": [],
+            "storageInputOffset": 1,
+            "storageOutputOffset": 2,
+            "storageOutput": [1, 2]
+          }
+        },
+        {
+          "operation": "rewindStorageInput",
+          "result": { "status": 0 },
+          "state": {
+            "inputOffset": 0,
+            "output": [],
+            "storageInputOffset": 0,
+            "storageOutputOffset": 2,
+            "storageOutput": [1, 2]
+          }
+        },
+        {
+          "operation": "readStorageByte",
+          "result": { "status": 0, "value": 16 },
+          "state": {
+            "inputOffset": 0,
+            "output": [],
+            "storageInputOffset": 1,
+            "storageOutputOffset": 2,
+            "storageOutput": [1, 2]
+          }
+        },
+        {
+          "operation": "seekStorageOutput",
+          "arguments": { "offset": 1 },
+          "result": { "status": 0 },
+          "state": {
+            "inputOffset": 0,
+            "output": [],
+            "storageInputOffset": 1,
+            "storageOutputOffset": 1,
+            "storageOutput": [1, 2]
+          }
+        },
+        {
+          "operation": "writeStorageByte",
+          "arguments": { "value": 153 },
+          "result": { "status": 0 },
+          "state": {
+            "inputOffset": 0,
+            "output": [],
+            "storageInputOffset": 1,
+            "storageOutputOffset": 2,
+            "storageOutput": [1, 153]
+          }
+        },
+        {
+          "operation": "writeStorageByte",
+          "arguments": { "value": 136 },
+          "result": { "status": 0 },
+          "state": {
+            "inputOffset": 0,
+            "output": [],
+            "storageInputOffset": 1,
+            "storageOutputOffset": 3,
+            "storageOutput": [1, 153, 136]
+          }
+        },
+        {
+          "operation": "seekStorageOutput",
+          "arguments": { "offset": 4 },
+          "result": { "status": 4 },
+          "state": {
+            "inputOffset": 0,
+            "output": [],
+            "storageInputOffset": 1,
+            "storageOutputOffset": 3,
+            "storageOutput": [1, 153, 136]
+          }
+        }
+      ]
+    },
+    {
+      "name": "configured-failures-are-atomic",
+      "initial": {
+        "input": [65],
+        "storageInput": [16],
+        "storageOutput": [1],
+        "failInputReads": true,
+        "failOutputWrites": true,
+        "failStorageReads": true,
+        "failStorageRewind": true,
+        "failStorageWrites": true,
+        "failStorageSeek": true
+      },
+      "steps": [
+        {
+          "operation": "readInputByte",
+          "result": { "status": 2 },
+          "state": {
+            "inputOffset": 0,
+            "output": [],
+            "storageInputOffset": 0,
+            "storageOutputOffset": 1,
+            "storageOutput": [1]
+          }
+        },
+        {
+          "operation": "writeOutputByte",
+          "arguments": { "value": 66 },
+          "result": { "status": 3 },
+          "state": {
+            "inputOffset": 0,
+            "output": [],
+            "storageInputOffset": 0,
+            "storageOutputOffset": 1,
+            "storageOutput": [1]
+          }
+        },
+        {
+          "operation": "readStorageByte",
+          "result": { "status": 4 },
+          "state": {
+            "inputOffset": 0,
+            "output": [],
+            "storageInputOffset": 0,
+            "storageOutputOffset": 1,
+            "storageOutput": [1]
+          }
+        },
+        {
+          "operation": "rewindStorageInput",
+          "result": { "status": 4 },
+          "state": {
+            "inputOffset": 0,
+            "output": [],
+            "storageInputOffset": 0,
+            "storageOutputOffset": 1,
+            "storageOutput": [1]
+          }
+        },
+        {
+          "operation": "writeStorageByte",
+          "arguments": { "value": 2 },
+          "result": { "status": 4 },
+          "state": {
+            "inputOffset": 0,
+            "output": [],
+            "storageInputOffset": 0,
+            "storageOutputOffset": 1,
+            "storageOutput": [1]
+          }
+        },
+        {
+          "operation": "seekStorageOutput",
+          "arguments": { "offset": 0 },
+          "result": { "status": 4 },
+          "state": {
+            "inputOffset": 0,
+            "output": [],
+            "storageInputOffset": 0,
+            "storageOutputOffset": 1,
+            "storageOutput": [1]
+          }
+        }
+      ]
+    },
+    {
+      "name": "reset-restores-the-run",
+      "initial": {
+        "input": [65],
+        "storageInput": [16],
+        "storageOutput": [1]
+      },
+      "steps": [
+        {
+          "operation": "readInputByte",
+          "result": { "status": 0, "value": 65 },
+          "state": {
+            "inputOffset": 1,
+            "output": [],
+            "storageInputOffset": 0,
+            "storageOutputOffset": 1,
+            "storageOutput": [1]
+          }
+        },
+        {
+          "operation": "readStorageByte",
+          "result": { "status": 0, "value": 16 },
+          "state": {
+            "inputOffset": 1,
+            "output": [],
+            "storageInputOffset": 1,
+            "storageOutputOffset": 1,
+            "storageOutput": [1]
+          }
+        },
+        {
+          "operation": "writeOutputByte",
+          "arguments": { "value": 85 },
+          "result": { "status": 0 },
+          "state": {
+            "inputOffset": 1,
+            "output": [85],
+            "storageInputOffset": 1,
+            "storageOutputOffset": 1,
+            "storageOutput": [1]
+          }
+        },
+        {
+          "operation": "writeStorageByte",
+          "arguments": { "value": 102 },
+          "result": { "status": 0 },
+          "state": {
+            "inputOffset": 1,
+            "output": [85],
+            "storageInputOffset": 1,
+            "storageOutputOffset": 2,
+            "storageOutput": [1, 102]
+          }
+        },
+        {
+          "operation": "reset",
+          "result": { "status": 0 },
+          "state": {
+            "inputOffset": 0,
+            "output": [],
+            "storageInputOffset": 0,
+            "storageOutputOffset": 1,
+            "storageOutput": [1]
+          }
+        }
+      ]
+    },
+    {
+      "name": "invalid-dispatch-is-atomic",
+      "initial": {
+        "input": [65],
+        "storageOutput": [1]
+      },
+      "steps": [
+        {
+          "operation": "unknown",
+          "result": { "status": 254 },
+          "state": {
+            "inputOffset": 0,
+            "output": [],
+            "storageInputOffset": 0,
+            "storageOutputOffset": 1,
+            "storageOutput": [1]
+          }
+        },
+        {
+          "operation": "writeOutputByte",
+          "arguments": { "value": 256 },
+          "result": { "status": 254 },
+          "state": {
+            "inputOffset": 0,
+            "output": [],
+            "storageInputOffset": 0,
+            "storageOutputOffset": 1,
+            "storageOutput": [1]
+          }
+        }
+      ]
+    }
+  ]
+}
