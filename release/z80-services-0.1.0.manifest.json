@@ -1,0 +1,95 @@
+{
+  "name": "z80-services",
+  "version": "0.1.0",
+  "profile": {
+    "name": "byteGateway",
+    "version": 0
+  },
+  "files": [
+    {
+      "path": "LICENSE",
+      "size": 34736,
+      "sha256": "6f0e2a6ac05068c54d7d82d92e437dadab46012bbafe641246bf429d88fb07e9"
+    },
+    {
+      "path": "README.md",
+      "size": 2589,
+      "sha256": "83fa1066769f24808f4a11e15e73ceec1e43e4465da68a31afc8a2c343e35cf9"
+    },
+    {
+      "path": "conformance/vectors/byte-gateway-v0.json",
+      "size": 8902,
+      "sha256": "0417939e4de5f6766dacbed763f300153a290681666cb130b4259d2565fc59af"
+    },
+    {
+      "path": "contracts/z80-services-v0.json",
+      "size": 968,
+      "sha256": "657c5403bc34285616c1b050a7e197b406b1b20f89f1b1727fa1ec09e4b9574e"
+    },
+    {
+      "path": "docs/architecture.md",
+      "size": 4259,
+      "sha256": "7f9666c7e71a78cb9101aa5776f48025543d2c6ffddaaee3b33809993e9e0737"
+    },
+    {
+      "path": "docs/byte-gateway-v0.md",
+      "size": 2932,
+      "sha256": "3ab045509976a8575de0b79c361e761a6ac397ffbad6323d28a4752ace69168a"
+    },
+    {
+      "path": "docs/consumer-audit.md",
+      "size": 4344,
+      "sha256": "7c6992e1002c88ab65c5541c83bec10bc55443d04c7c58c5a268ac45c60e3410"
+    },
+    {
+      "path": "docs/dependencies.md",
+      "size": 1716,
+      "sha256": "5d644b096e8b6411bd7c3ea44101c27f9624df51f52272630ae63966221f779a"
+    },
+    {
+      "path": "native/README.md",
+      "size": 1104,
+      "sha256": "0e846affc0bfe862936d3c3062fe45c636ffccb76c129bbd5fea1a2edcc70024"
+    },
+    {
+      "path": "native/client/byte-gateway.asm",
+      "size": 279,
+      "sha256": "7b6d68d5a84759d33a28a6dd753e825d54389e8af6e8a3e26354d75ed6ec17e5"
+    },
+    {
+      "path": "native/include/z80-services-v0.asmi",
+      "size": 319,
+      "sha256": "332ba9daa069e9d7d9dac0c24b2b6e6b9cfc7d5df1362b4ef80a43e13d1b554b"
+    },
+    {
+      "path": "native/providers/io-port-byte-gateway.asm",
+      "size": 717,
+      "sha256": "67edec6c77d4422ef68e400253eb0dca4df5af2bb9b441728c1e0ca35bb64819"
+    },
+    {
+      "path": "native/providers/memory-byte-gateway.asm",
+      "size": 1744,
+      "sha256": "fbb75556ed4f550e74503656c35fdd5e65f802a4c9667809a60bf835f78f20fd"
+    },
+    {
+      "path": "proofs/byte-gateway-v0.json",
+      "size": 651,
+      "sha256": "daab2f8cfd22c655c6bd91e86a644168fe57868e53a2692dc37867403002f11f"
+    },
+    {
+      "path": "reference/byte-gateway.ts",
+      "size": 7413,
+      "sha256": "e18750ba82ad574ebebe49153591f3e9c95a6df7d72a5e49bd5090c41ba013d7"
+    },
+    {
+      "path": "reference/contract.ts",
+      "size": 512,
+      "sha256": "875980867cdde9fa0c9cfe5b665cd01831431c56fe2e5eb1ef556b6f84503890"
+    },
+    {
+      "path": "reference/io-port-gateway.ts",
+      "size": 2079,
+      "sha256": "d3be12dafaa80c21c6c5c99a4d21b768a53695d010070a544992e0d5a17f40d5"
+    }
+  ]
+}

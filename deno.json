@@ -2,9 +2,11 @@
   "tasks": {
     "generate": "deno run --allow-read=contracts --allow-write=reference/contract.ts,native/include/z80-services-v0.asmi scripts/generate-contract.ts",
     "generate:check": "deno run --allow-read=contracts,reference/contract.ts,native/include/z80-services-v0.asmi scripts/generate-contract.ts --check",
+    "release": "deno run --allow-read=. --allow-write=release,dist scripts/build-release.ts",
+    "release:check": "deno run --allow-read=. scripts/build-release.ts --check",
     "test": "deno test --allow-read=. reference/ native/",
     "check": "deno check reference/*.ts scripts/*.ts",
-    "verify": "deno fmt --check && deno lint && deno task generate:check && deno task check && deno task test"
+    "verify": "deno fmt --check && deno lint && deno task generate:check && deno task release:check && deno task check && deno task test"
   },
   "nodeModulesDir": "manual",
   "fmt": {
