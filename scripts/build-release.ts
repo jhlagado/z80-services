@@ -11,6 +11,7 @@ const releaseFiles = [
   "LICENSE",
   "README.md",
   "contracts/z80-services-v0.json",
+  "conformance/projections/nucleus-byte-gateway-v0.json",
   "conformance/vectors/byte-gateway-v0.json",
   "docs/architecture.md",
   "docs/byte-gateway-v0.md",

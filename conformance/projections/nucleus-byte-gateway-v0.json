@@ -1,0 +1,60 @@
+{
+  "schema": "z80-services-projection-v1",
+  "consumer": "nucleus",
+  "consumerContract": "nucleus-runtime-v0",
+  "providerContract": "z80-services-v0",
+  "profile": "byteGateway",
+  "version": 0,
+  "operations": [
+    {
+      "consumer": "readInputByte",
+      "provider": "readInputByte",
+      "code": 0,
+      "result": "byte-or-status"
+    },
+    {
+      "consumer": "writeOutputByte",
+      "provider": "writeOutputByte",
+      "code": 1,
+      "result": "status"
+    },
+    {
+      "consumer": "readStorageByte",
+      "provider": "readStorageByte",
+      "code": 2,
+      "result": "byte-or-status"
+    },
+    {
+      "consumer": "rewindStorageInput",
+      "provider": "rewindStorageInput",
+      "code": 3,
+      "result": "status"
+    },
+    {
+      "consumer": "writeStorageByte",
+      "provider": "writeStorageByte",
+      "code": 4,
+      "result": "status"
+    },
+    {
+      "consumer": "seekStorageOutput",
+      "provider": "seekStorageOutput",
+      "code": 5,
+      "result": "status"
+    }
+  ],
+  "statuses": {
+    "success": 0,
+    "endOfInput": 1,
+    "inputFailure": 2,
+    "outputFailure": 3,
+    "storageFailure": 4
+  },
+  "excludedConsumerVectors": [
+    "success",
+    "unhandledFailure",
+    "trap",
+    "farCall",
+    "farJump"
+  ]
+}

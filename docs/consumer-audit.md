@@ -50,6 +50,13 @@ port or file-handle interface. It gives Nucleus a direct migration, gives Skate
 the two console operations it presently needs, and gives Atom programs a small
 native surface.
 
+The Nucleus projection is recorded as machine-readable data in
+[`conformance/projections/nucleus-byte-gateway-v0.json`](../conformance/projections/nucleus-byte-gateway-v0.json)
+and checked by the reference test suite. That projection is deliberately
+limited to the six byte operations. Nucleus's success, failure, trap, and
+bank-control vectors remain language/runtime-owned and are not silently
+reclassified as general services.
+
 The native convention follows the existing Nucleus service ABI:
 
 - reads take no argument and return the byte in `A` with carry clear;

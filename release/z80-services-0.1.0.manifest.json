@@ -17,6 +17,11 @@
       "sha256": "83fa1066769f24808f4a11e15e73ceec1e43e4465da68a31afc8a2c343e35cf9"
     },
     {
+      "path": "conformance/projections/nucleus-byte-gateway-v0.json",
+      "size": 1266,
+      "sha256": "0c6182ae99e5126ea1df71952731a52aea9f3f89beb44ed033419002703d9e3f"
+    },
+    {
       "path": "conformance/vectors/byte-gateway-v0.json",
       "size": 8902,
       "sha256": "0417939e4de5f6766dacbed763f300153a290681666cb130b4259d2565fc59af"
@@ -38,8 +43,8 @@
     },
     {
       "path": "docs/consumer-audit.md",
-      "size": 4344,
-      "sha256": "7c6992e1002c88ab65c5541c83bec10bc55443d04c7c58c5a268ac45c60e3410"
+      "size": 4775,
+      "sha256": "3fa7b79d901faf8460dbb6bee07b6efcd858428d7015d8bc6625bac9b61fe7fb"
     },
     {
       "path": "docs/dependencies.md",
