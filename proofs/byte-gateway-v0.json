@@ -1,0 +1,29 @@
+{
+  "profile": "byteGateway",
+  "version": 0,
+  "target": "Z80",
+  "assembler": {
+    "package": "atom-z80",
+    "revision": "33a2a94ca977ef486359f292567f4049273100c9"
+  },
+  "executor": {
+    "package": "@jhlagado/debug80-runtime",
+    "revision": "0024be1d868473568984fcde5a8323e575e595bf"
+  },
+  "clientBytes": 18,
+  "testProgramBytes": 110,
+  "providers": {
+    "memory": {
+      "codeBytes": 209,
+      "workspaceBytes": 74,
+      "integrationInstructions": 190,
+      "integrationCycles": 1652
+    },
+    "io": {
+      "codeBytes": 60,
+      "workspaceBytes": 0,
+      "integrationInstructions": 118,
+      "integrationCycles": 1066
+    }
+  }
+}

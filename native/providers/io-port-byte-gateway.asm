@@ -1,0 +1,61 @@
+; Byte-gateway provider using the experimental E0-E4 I/O-port transport.
+; The low byte of the Z80 port address identifies the register.
+
+ZS_IOOP  EQU $E0
+ZS_IOVAL EQU $E1
+ZS_IOST  EQU $E2
+ZS_IORES EQU $E3
+ZS_IOHI  EQU $E4
+
+ZP_RDIN:
+LD A,ZS_OPRIN
+JP ZP_READ
+
+ZP_RDST:
+LD A,ZS_OPRST
+ZP_READ:
+OUT (ZS_IOOP),A
+IN A,(ZS_IOST)
+OR A
+JR Z,ZP_RVAL
+SCF
+RET
+ZP_RVAL:
+IN A,(ZS_IORES)
+OR A
+RET
+
+ZP_WOUT:
+LD E,A
+LD A,ZS_OPWOU
+JP ZP_WBYTE
+
+ZP_WRST:
+LD E,A
+LD A,ZS_OPWST
+ZP_WBYTE:
+OUT (ZS_IOOP),A
+LD A,E
+OUT (ZS_IOVAL),A
+JP ZP_STAT
+
+ZP_RWST:
+LD A,ZS_OPRWI
+OUT (ZS_IOOP),A
+JP ZP_STAT
+
+ZP_SKST:
+LD A,L
+OUT (ZS_IOVAL),A
+LD A,H
+OUT (ZS_IOHI),A
+LD A,ZS_OPSSO
+OUT (ZS_IOOP),A
+ZP_STAT:
+IN A,(ZS_IOST)
+OR A
+RET Z
+SCF
+RET
+ZS_PCEND:
+ZS_PEND:

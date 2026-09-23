@@ -1,0 +1,16 @@
+{
+  "name": "@jhlagado/z80-services",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Provider-neutral runtime services for Z80 programs",
+  "license": "GPL-3.0-or-later",
+  "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
+  "devDependencies": {
+    "@jhlagado/debug80-runtime": "git+https://github.com/jhlagado/debug80-runtime.git#0024be1d868473568984fcde5a8323e575e595bf",
+    "@types/node": "^20.19.43",
+    "atom-z80": "git+https://github.com/jhlagado/atom.git#33a2a94ca977ef486359f292567f4049273100c9"
+  }
+}

@@ -28,14 +28,20 @@ libraries only when real consumers establish a common interface and cost.
 
 ## Current state
 
-The first contract is deliberately experimental. It records the synchronous
-byte gateway already exercised by the project family. `docs/architecture.md`
-describes the intended platform, while `docs/p2-transport.md` and the
-`reference/p2-*` files preserve the existing framed-transport experiment.
-P2 is one possible transport; it is not the service abstraction itself.
+The first contract is the synchronous byte gateway described in
+[`docs/byte-gateway-v0.md`](docs/byte-gateway-v0.md). Its six-call native client
+is 18 bytes. The same ATOM consumer is assembled and executed against a bounded
+memory provider and an I/O-port provider. Language-neutral vectors also qualify
+the host reference provider, reset and failure behaviour.
 
-Run `deno task verify` to regenerate and check the contract projections and to
-run the reference tests.
+[`docs/architecture.md`](docs/architecture.md) describes the intended platform,
+while [`docs/p2-transport.md`](docs/p2-transport.md) and the `reference/p2-*`
+files preserve the existing framed-transport experiment. P2 is one possible
+transport; it is not the service abstraction itself.
+
+Run `npm ci` once, then `deno task verify` to check generated projections,
+reference providers and native ATOM execution. Measured byte and cycle accounts
+are fixed by [`proofs/byte-gateway-v0.json`](proofs/byte-gateway-v0.json).
 
 ## Distribution
 
