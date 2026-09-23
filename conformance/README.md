@@ -14,3 +14,9 @@ projection for Nucleus. It makes the ownership boundary explicit: the six
 byte-stream services and their status values come from this repository, while
 Nucleus keeps its success, trap, far-call and far-jump entries in its own
 runtime contract.
+
+`projections/skate-byte-gateway-v0.json` is the smaller Skate projection. It
+maps `read-char` and `write-char` to the shared console byte operations while
+leaving Control-Z/EOF, echo, line editing and CR/LF policy in Skate's language
+adapter. It deliberately does not claim storage, terminal-control, event or
+future Scheme-port semantics.

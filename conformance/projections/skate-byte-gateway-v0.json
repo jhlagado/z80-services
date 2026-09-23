@@ -1,0 +1,41 @@
+{
+  "schema": "z80-services-projection-v1",
+  "consumer": "skate",
+  "consumerContract": "skate-cpm-console-v0",
+  "providerContract": "z80-services-v0",
+  "profile": "byteGateway",
+  "version": 0,
+  "operations": [
+    {
+      "consumer": "read-char",
+      "provider": "readInputByte",
+      "code": 0,
+      "result": "byte-or-eof"
+    },
+    {
+      "consumer": "write-char",
+      "provider": "writeOutputByte",
+      "code": 1,
+      "result": "status"
+    }
+  ],
+  "statuses": {
+    "success": 0,
+    "endOfInput": 1,
+    "inputFailure": 2,
+    "outputFailure": 3,
+    "storageFailure": 4
+  },
+  "policies": {
+    "controlZ": "language-eof",
+    "echo": "consumer-adapter",
+    "lineEditing": "consumer-adapter",
+    "translateCrLf": "consumer-adapter"
+  },
+  "excludedConsumerVectors": [
+    "storage",
+    "terminal-control",
+    "events",
+    "scheme-port-handles"
+  ]
+}
