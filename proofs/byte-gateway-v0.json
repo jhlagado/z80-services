@@ -7,8 +7,8 @@
     "revision": "33a2a94ca977ef486359f292567f4049273100c9"
   },
   "executor": {
-    "package": "@jhlagado/debug80-runtime",
-    "revision": "0024be1d868473568984fcde5a8323e575e595bf"
+    "package": "@jhlagado/z80-runtime",
+    "revision": "e4ee190"
   },
   "clientBytes": 18,
   "testProgramBytes": 110,

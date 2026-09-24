@@ -78,8 +78,8 @@
     },
     {
       "path": "proofs/byte-gateway-v0.json",
-      "size": 651,
-      "sha256": "daab2f8cfd22c655c6bd91e86a644168fe57868e53a2692dc37867403002f11f"
+      "size": 614,
+      "sha256": "76bc17d17d639b205bc090cc554abf5c9bc0af8a8923186ab37e6a415f2a7fae"
     },
     {
       "path": "reference/byte-gateway.ts",
