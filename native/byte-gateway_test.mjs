@@ -4,7 +4,7 @@ import {
   materializeAtomGeneration,
   writeAtomD8,
 } from "atom-z80";
-import { createZ80Runtime } from "@jhlagado/debug80-runtime";
+import { createZ80Runtime } from "@jhlagado/z80-runtime";
 import { MemoryByteGateway } from "../reference/byte-gateway.ts";
 import { createIoPortGateway } from "../reference/io-port-gateway.ts";
 import proof from "../proofs/byte-gateway-v0.json" with { type: "json" };
