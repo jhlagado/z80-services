@@ -19,8 +19,8 @@ hardware may implement the same contract differently.
 This repository is for operations performed by a running program.
 [Z80 Tool Services](https://github.com/jhlagado/z80-tool-services) is for
 operations performed on behalf of compilers, assemblers and build tools. The
-implementation language does not decide ownership: a TypeScript provider for a
-running program belongs here, while a Z80 NOBJ loader belongs with the tools.
+operation decides ownership: a TypeScript provider for a running program
+belongs here, while a Z80 NOBJ loader belongs with the tools.
 
 General-purpose routines such as formatting, CRCs and memory operations are
 not automatically services. They should become separately versioned native
@@ -33,6 +33,12 @@ The first contract is the synchronous byte gateway described in
 is 18 bytes. The same ATOM consumer is assembled and executed against a bounded
 memory provider and an I/O-port provider. Language-neutral vectors also qualify
 the host reference provider, reset and failure behaviour.
+
+The surrounding boundary is recorded in [`docs/architecture.md`](docs/architecture.md)
+and the four v0 contract papers linked there. They separate service meaning
+from target profiles, optional capabilities, bindings and transports. Named
+files, terminal control, video and sound remain separate profiles rather than
+becoming CP/M or Triptych details in the byte gateway.
 
 [`docs/architecture.md`](docs/architecture.md) describes the intended platform,
 while [`docs/p2-transport.md`](docs/p2-transport.md) and the `reference/p2-*`

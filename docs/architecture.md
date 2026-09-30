@@ -55,11 +55,12 @@ terminal control, input events and clocks follow only after the base profile is
 qualified. Graphics and sound are later profiles because their useful
 operations differ between devices.
 
-A provider may advertise optional capabilities. A general program can request
-a terminal and an event source. A specialised program can request a tile or
-sprite profile and decline to run when the provider does not supply it. The
-profile remains concrete: its discovery result reports a version, limits and
-supported operations rather than promising an unspecified “display”.
+A target manifest may list optional service profiles. Target selection can
+require a terminal or event source. A specialised program can require a tile or
+sprite profile and use a target-specific fallback when it is absent. Guest-side
+probing requires the future query profile. The profile remains concrete: its
+manifest records a version, limits and supported operations rather than an
+unspecified “display”.
 
 The base call is synchronous and bounded. It returns success, EOF or a checked
 error. Pending work and cooperative scheduling are separate optional
@@ -88,6 +89,18 @@ used to qualify a release.
 
 The first useful proof is intentionally narrow: one synchronous byte-stream
 contract, one memory-backed reference provider, one portable ATOM client and
-the same conformance vectors run through both. P2 framing can then carry that
-contract as one transport. The existing scheduler experiment remains useful
+the same conformance vectors run through both. P2 framing remains a separate
+transport experiment until an operation mapping and binding version qualify it
+for a service profile. The existing scheduler experiment remains useful
 research, but it does not set the shape of the base service ABI.
+
+The contract papers divide the next decisions into four parts:
+
+- [`target-profile-v0.md`](target-profile-v0.md) defines the guest-facing target
+  boundary without taking ownership of a machine memory map;
+- [`capability-model-v0.md`](capability-model-v0.md) defines optional services
+  and their descriptors;
+- [`console-and-storage-v0.md`](console-and-storage-v0.md) fixes the byte
+  gateway boundary and leaves named files as a separate profile; and
+- [`bindings-and-conformance-v0.md`](bindings-and-conformance-v0.md) separates
+  service meaning from bindings, transports and release qualification.

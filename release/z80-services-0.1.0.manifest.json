@@ -13,8 +13,8 @@
     },
     {
       "path": "README.md",
-      "size": 2589,
-      "sha256": "83fa1066769f24808f4a11e15e73ceec1e43e4465da68a31afc8a2c343e35cf9"
+      "size": 2940,
+      "sha256": "ff8c7b3ad35f502d120bdddf7752cfa7e22e55c8a9b2644edccb69636ec7774b"
     },
     {
       "path": "conformance/projections/nucleus-byte-gateway-v0.json",
@@ -33,13 +33,28 @@
     },
     {
       "path": "docs/architecture.md",
-      "size": 4259,
-      "sha256": "7f9666c7e71a78cb9101aa5776f48025543d2c6ffddaaee3b33809993e9e0737"
+      "size": 4971,
+      "sha256": "85ee6352409983c36eec7023d420ebc06d37c3b30839eb0ef0cd93ab8614ae50"
+    },
+    {
+      "path": "docs/bindings-and-conformance-v0.md",
+      "size": 3168,
+      "sha256": "3b6d04359449ab2d7ec10ffa653f40ecd556a7059895e79b29842b29391cf65e"
     },
     {
       "path": "docs/byte-gateway-v0.md",
       "size": 2932,
       "sha256": "3ab045509976a8575de0b79c361e761a6ac397ffbad6323d28a4752ace69168a"
+    },
+    {
+      "path": "docs/capability-model-v0.md",
+      "size": 3352,
+      "sha256": "f9e680f1b6016ea7811edf9ffa3de080dc5f079c1190b8c719f49fcc1bbaaf13"
+    },
+    {
+      "path": "docs/console-and-storage-v0.md",
+      "size": 2446,
+      "sha256": "105d1185f399e306f9707a8fdc58fc9e65c7467cc43c651542d47a4cfdec6f37"
     },
     {
       "path": "docs/consumer-audit.md",
@@ -50,6 +65,11 @@
       "path": "docs/dependencies.md",
       "size": 1716,
       "sha256": "5d644b096e8b6411bd7c3ea44101c27f9624df51f52272630ae63966221f779a"
+    },
+    {
+      "path": "docs/target-profile-v0.md",
+      "size": 4757,
+      "sha256": "ec8724cbba0c70703b0a60f7193c5215bb2fe6bb8174856b553db69b575980e6"
     },
     {
       "path": "native/README.md",
