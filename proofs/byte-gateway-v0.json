@@ -4,7 +4,7 @@
   "target": "Z80",
   "assembler": {
     "package": "atom-z80",
-    "revision": "33a2a94ca977ef486359f292567f4049273100c9"
+    "version": "0.3.7"
   },
   "executor": {
     "package": "@jhlagado/z80-runtime",

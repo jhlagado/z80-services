@@ -12,7 +12,7 @@
     "@biomejs/biome": "^2.6.3",
     "@jhlagado/z80-runtime": "git+https://github.com/jhlagado/z80-runtime.git#e4ee190",
     "@types/node": "^22.20.5",
-    "atom-z80": "git+https://github.com/jhlagado/atom.git#33a2a94ca977ef486359f292567f4049273100c9",
+    "atom-z80": "0.3.7",
     "typescript": "^7.0.2"
   },
   "scripts": {
