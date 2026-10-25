@@ -1,3 +1,5 @@
+import { readFile } from "node:fs/promises";
+import test from "node:test";
 import assert from "node:assert/strict";
 import {
   assembleResolvedAtomProject,
@@ -20,7 +22,7 @@ const files = {
   io: "native/providers/io-port-byte-gateway.asm",
 };
 
-const read = (name) => Deno.readTextFile(name);
+const read = (name) => readFile(name, "utf8");
 
 async function assemble(provider) {
   const [contract, client, implementation, program] = await Promise.all([
@@ -29,18 +31,20 @@ async function assemble(provider) {
     read(files[provider]),
     read(files.program),
   ]);
-  const source = `ORG ${
-    LOAD.toString(16)
-  }H\n${contract}\n${client}\n${implementation}\n${program}`;
+  const source = `ORG ${LOAD.toString(
+    16,
+  )}H\n${contract}\n${client}\n${implementation}\n${program}`;
   const bytes = new TextEncoder().encode(source);
   const project = {
-    parts: [{
-      ordinal: 0,
-      bank: 0,
-      logicalIdentity: `${provider}-provider-proof.asm`,
-      originalBytes: bytes,
-      compilerBytes: bytes,
-    }],
+    parts: [
+      {
+        ordinal: 0,
+        bank: 0,
+        logicalIdentity: `${provider}-provider-proof.asm`,
+        originalBytes: bytes,
+        compilerBytes: bytes,
+      },
+    ],
   };
   const result = await assembleResolvedAtomProject(project, {
     target: { start: 0, capacity: 0xffff },
@@ -49,17 +53,19 @@ async function assemble(provider) {
   }).catch((cause) => {
     const line = cause.diagnostic?.line;
     throw new Error(
-      `${provider}-provider-proof.asm:${line ?? "?"}: ${cause.message} ${
-        JSON.stringify(cause.diagnostic ?? {})
-      }\n${line === undefined ? "" : source.split("\n")[line - 1]}`,
+      `${provider}-provider-proof.asm:${line ?? "?"}: ${cause.message} ${JSON.stringify(
+        cause.diagnostic ?? {},
+      )}\n${line === undefined ? "" : source.split("\n")[line - 1]}`,
       { cause },
     );
   });
   const debugMap = writeAtomD8(project, result.generation);
-  const symbols = Object.fromEntries(debugMap.symbols.flatMap((symbol) => {
-    const value = symbol.address ?? symbol.value;
-    return value === undefined ? [] : [[symbol.name.toUpperCase(), value]];
-  }));
+  const symbols = Object.fromEntries(
+    debugMap.symbols.flatMap((symbol) => {
+      const value = symbol.address ?? symbol.value;
+      return value === undefined ? [] : [[symbol.name.toUpperCase(), value]];
+    }),
+  );
   const materialized = materializeAtomGeneration(result.generation, {
     base: 0,
   });
@@ -133,12 +139,9 @@ function assertMachineContract(runtime, symbols) {
   assert.equal(runtime.hardware.memory[symbols.ZS_RES], 0);
 }
 
-Deno.test("portable client is an 18-byte six-entry JP vector", async () => {
+test("portable client is an 18-byte six-entry JP vector", async () => {
   const built = await assemble("memory");
-  assert.equal(
-    built.symbols.ZS_VEND - built.symbols.ZSRDIN,
-    proof.clientBytes,
-  );
+  assert.equal(built.symbols.ZS_VEND - built.symbols.ZSRDIN, proof.clientBytes);
   assert.deepEqual(
     [
       built.symbols.ZSWROUT,
@@ -152,7 +155,7 @@ Deno.test("portable client is an 18-byte six-entry JP vector", async () => {
   );
 });
 
-Deno.test("unchanged native consumer passes against the memory provider", async () => {
+test("unchanged native consumer passes against the memory provider", async () => {
   const built = await assemble("memory");
   const memory = new Uint8Array(0x10000);
   memory.set(built.memory);
@@ -197,7 +200,7 @@ Deno.test("unchanged native consumer passes against the memory provider", async 
   assert.ok(execution.cycles > 0);
 });
 
-Deno.test("unchanged native consumer passes against the I/O-port provider", async () => {
+test("unchanged native consumer passes against the I/O-port provider", async () => {
   const built = await assemble("io");
   const gateway = new MemoryByteGateway({
     input: [0x41],
@@ -208,11 +211,10 @@ Deno.test("unchanged native consumer passes against the I/O-port provider", asyn
   const io = createIoPortGateway(gateway);
   const memory = new Uint8Array(0x10000);
   memory.set(built.memory);
-  const runtime = createZ80Runtime(
-    { memory, startAddress: LOAD },
-    LOAD,
-    { read: io.read, write: io.write },
-  );
+  const runtime = createZ80Runtime({ memory, startAddress: LOAD }, LOAD, {
+    read: io.read,
+    write: io.write,
+  });
   initialiseCpu(runtime, built.symbols);
   const execution = run(runtime);
   assertMachineContract(runtime, built.symbols);
@@ -240,7 +242,7 @@ Deno.test("unchanged native consumer passes against the I/O-port provider", asyn
   assert.ok(execution.cycles > 0);
 });
 
-Deno.test("native memory-provider failures are atomic", async () => {
+test("native memory-provider failures are atomic", async () => {
   const built = await assemble("memory");
   const memory = new Uint8Array(0x10000);
   memory.set(built.memory);

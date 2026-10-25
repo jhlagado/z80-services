@@ -26,8 +26,9 @@ consumer's own assembly and execution qualification.
 
 ## Host providers and tests
 
-The reference TypeScript files are shipped as source. This first release is not
-an npm package. A host may vendor them from the tagged bundle or implement the
+The reference TypeScript files are shipped as source. They use only erasable
+TypeScript syntax, so Node 22.18 or later runs them directly. This first release
+is not an npm package. A host may vendor them from the tagged bundle or implement the
 same language-neutral vectors directly. ATOM and Debug80 are exact, locked
 development dependencies used to prove the native sources; native consumers do
 not inherit them.

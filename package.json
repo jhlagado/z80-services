@@ -6,11 +6,23 @@
   "license": "GPL-3.0-or-later",
   "type": "module",
   "engines": {
-    "node": ">=20"
+    "node": ">=22.18"
   },
   "devDependencies": {
+    "@biomejs/biome": "^2.6.3",
     "@jhlagado/z80-runtime": "git+https://github.com/jhlagado/z80-runtime.git#e4ee190",
-    "@types/node": "^20.19.43",
-    "atom-z80": "git+https://github.com/jhlagado/atom.git#33a2a94ca977ef486359f292567f4049273100c9"
+    "@types/node": "^22.20.5",
+    "atom-z80": "git+https://github.com/jhlagado/atom.git#33a2a94ca977ef486359f292567f4049273100c9",
+    "typescript": "^7.0.2"
+  },
+  "scripts": {
+    "generate": "node --permission --allow-fs-read=contracts --allow-fs-write=reference/contract.ts --allow-fs-write=native/include/z80-services-v0.asmi scripts/generate-contract.ts",
+    "generate:check": "node --permission --allow-fs-read=contracts --allow-fs-read=reference/contract.ts --allow-fs-read=native/include/z80-services-v0.asmi scripts/generate-contract.ts --check",
+    "release": "node --permission --allow-fs-read=. --allow-fs-write=release --allow-fs-write=dist --allow-fs-write=dist/* scripts/build-release.ts",
+    "release:check": "node --permission --allow-fs-read=. scripts/build-release.ts --check",
+    "test": "node --permission --allow-fs-read=. --test --test-isolation=none 'reference/**/{*_,*.,}test.{ts,mts,js,mjs}' 'native/**/{*_,*.,}test.{ts,mts,js,mjs}'",
+    "check": "tsc -p tsconfig.json",
+    "test:tools": "node --test tools/deno-to-node_test.mjs",
+    "verify": "biome format && biome lint && npm run generate:check && npm run release:check && npm run check && npm run test && npm run test:tools"
   }
 }

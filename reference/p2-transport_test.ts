@@ -1,3 +1,4 @@
+import test from "node:test";
 import assert from "node:assert/strict";
 import {
   decodeEffectEvent,
@@ -23,7 +24,7 @@ function frameBytes(payload = Uint8Array.of(1, 2, 3)): Uint8Array {
   });
 }
 
-Deno.test("effect frames round-trip through every serial chunk boundary", () => {
+test("effect frames round-trip through every serial chunk boundary", () => {
   const encoded = frameBytes();
   assert.equal(encoded.length, EFFECT_HEADER_BYTES + 3 + 2);
   assert.deepEqual(decodeEffectFrame(encoded), {
@@ -41,7 +42,7 @@ Deno.test("effect frames round-trip through every serial chunk boundary", () => 
   }
 });
 
-Deno.test("effect framing rejects malformed, truncated, corrupt and oversized input", () => {
+test("effect framing rejects malformed, truncated, corrupt and oversized input", () => {
   assert.throws(
     () => decodeEffectFrame(frameBytes().slice(0, -1)),
     (error) =>
@@ -72,7 +73,7 @@ Deno.test("effect framing rejects malformed, truncated, corrupt and oversized in
   );
 });
 
-Deno.test("all normalized and raw event forms preserve their fields", () => {
+test("all normalized and raw event forms preserve their fields", () => {
   const events = [
     { type: "text", source: 1, sequence: 2, text: "é" },
     { type: "key", source: 3, sequence: 4, key: "ArrowUp", modifiers: 5 },
@@ -107,7 +108,7 @@ Deno.test("all normalized and raw event forms preserve their fields", () => {
   }
 });
 
-Deno.test("the synchronous client records commands, queries and typed input", () => {
+test("the synchronous client records commands, queries and typed input", () => {
   const provider = new RecordingEffectProvider();
   const client = new EffectClient(new ProviderTransport(provider));
   client.sendText("hello");
@@ -146,13 +147,15 @@ Deno.test("the synchronous client records commands, queries and typed input", ()
   });
   assert.equal(client.readEvent(), null);
   assert.deepEqual(provider.textWrites, [new TextEncoder().encode("hello")]);
-  assert.deepEqual(provider.controls, [{
-    capability: 9,
-    bytes: Uint8Array.of(0x1b, 0x5b, 0x32, 0x4a),
-  }]);
+  assert.deepEqual(provider.controls, [
+    {
+      capability: 9,
+      bytes: Uint8Array.of(0x1b, 0x5b, 0x32, 0x4a),
+    },
+  ]);
 });
 
-Deno.test("event admission reserves the response status byte", () => {
+test("event admission reserves the response status byte", () => {
   const provider = new RecordingEffectProvider();
   const client = new EffectClient(new ProviderTransport(provider));
   provider.queueEvent({
@@ -176,17 +179,19 @@ Deno.test("event admission reserves the response status byte", () => {
   assert.equal(client.readEvent(), null);
 });
 
-Deno.test("unsupported framed commands return checked provider errors", () => {
+test("unsupported framed commands return checked provider errors", () => {
   const provider = new RecordingEffectProvider();
   const transport = new ProviderTransport(provider);
   const response = decodeEffectResponse(
     decodeEffectFrame(
-      transport.transact(encodeEffectFrame({
-        kind: "request",
-        opcode: 0xff,
-        correlation: 42,
-        payload: new Uint8Array(0),
-      })),
+      transport.transact(
+        encodeEffectFrame({
+          kind: "request",
+          opcode: 0xff,
+          correlation: 42,
+          payload: new Uint8Array(0),
+        }),
+      ),
     ),
   );
   assert.deepEqual(response, {

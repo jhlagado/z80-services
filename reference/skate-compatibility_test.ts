@@ -1,10 +1,11 @@
+import test from "node:test";
 import assert from "node:assert/strict";
 import projection from "../conformance/projections/skate-byte-gateway-v0.json" with {
   type: "json",
 };
 import { BYTE_GATEWAY_PROFILE, STATUS } from "./contract.ts";
 
-Deno.test("Skate console operations project onto the shared byte gateway", () => {
+test("Skate console operations project onto the shared byte gateway", () => {
   assert.equal(projection.schema, "z80-services-projection-v1");
   assert.equal(projection.consumer, "skate");
   assert.equal(projection.consumerContract, "skate-cpm-console-v0");

@@ -1,9 +1,10 @@
+import test from "node:test";
 import assert from "node:assert/strict";
 import { MemoryByteGateway } from "./byte-gateway.ts";
 import { BYTE_GATEWAY_PROFILE, STATUS } from "./contract.ts";
 import { BYTE_GATEWAY_PORT, createIoPortGateway } from "./io-port-gateway.ts";
 
-Deno.test("I/O-port gateway carries all byte-gateway argument shapes", () => {
+test("I/O-port gateway carries all byte-gateway argument shapes", () => {
   const gateway = new MemoryByteGateway({
     input: [0x41],
     storageInput: [0x51],
@@ -38,7 +39,7 @@ Deno.test("I/O-port gateway carries all byte-gateway argument shapes", () => {
   });
 });
 
-Deno.test("I/O-port gateway rejects absent and unknown operations atomically", () => {
+test("I/O-port gateway rejects absent and unknown operations atomically", () => {
   const gateway = new MemoryByteGateway({ input: [0x41] });
   const io = createIoPortGateway(gateway);
   assert.equal(io.read(BYTE_GATEWAY_PORT.status), STATUS.invalid);

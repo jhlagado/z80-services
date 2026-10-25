@@ -1,6 +1,8 @@
+import { mkdir, readFile, writeFile } from "node:fs/promises";
+
 const root = new URL("../", import.meta.url);
 const packageJson = JSON.parse(
-  await Deno.readTextFile(new URL("package.json", root)),
+  await readFile(new URL("package.json", root), "utf8"),
 ) as { version: string };
 const version = packageJson.version;
 const archiveName = `z80-services-${version}.tar`;
@@ -85,7 +87,7 @@ function tarEntry(path: string, contents: Uint8Array): Uint8Array {
 
 const sourceEntries = await Promise.all(
   releaseFiles.map(async (path) => {
-    const contents = await Deno.readFile(new URL(path, root));
+    const contents = new Uint8Array(await readFile(new URL(path, root)));
     return {
       path,
       contents,
@@ -94,22 +96,20 @@ const sourceEntries = await Promise.all(
     };
   }),
 );
-const manifest = `${
-  JSON.stringify(
-    {
-      name: "z80-services",
-      version,
-      profile: { name: "byteGateway", version: 0 },
-      files: sourceEntries.map(({ path, size, sha256 }) => ({
-        path,
-        size,
-        sha256,
-      })),
-    },
-    null,
-    2,
-  )
-}\n`;
+const manifest = `${JSON.stringify(
+  {
+    name: "z80-services",
+    version,
+    profile: { name: "byteGateway", version: 0 },
+    files: sourceEntries.map(({ path, size, sha256 }) => ({
+      path,
+      size,
+      sha256,
+    })),
+  },
+  null,
+  2,
+)}\n`;
 const manifestBytes = encoder.encode(manifest);
 const tarParts = [
   ...sourceEntries.map(({ path, contents }) => tarEntry(path, contents)),
@@ -125,16 +125,16 @@ for (const part of tarParts) {
 }
 const checksum = `${await sha256(tar)}  ${archiveName}\n`;
 
-if (Deno.args.includes("--check")) {
-  const expectedManifest = await Deno.readTextFile(new URL(manifestPath, root));
-  const expectedChecksum = await Deno.readTextFile(new URL(checksumPath, root));
+if (process.argv.slice(2).includes("--check")) {
+  const expectedManifest = await readFile(new URL(manifestPath, root), "utf8");
+  const expectedChecksum = await readFile(new URL(checksumPath, root), "utf8");
   if (expectedManifest !== manifest || expectedChecksum !== checksum) {
     throw new Error("release manifest or archive checksum is stale");
   }
 } else {
-  await Deno.mkdir(new URL("release/", root), { recursive: true });
-  await Deno.mkdir(new URL("dist/", root), { recursive: true });
-  await Deno.writeTextFile(new URL(manifestPath, root), manifest);
-  await Deno.writeTextFile(new URL(checksumPath, root), checksum);
-  await Deno.writeFile(new URL(`dist/${archiveName}`, root), tar);
+  await mkdir(new URL("release/", root), { recursive: true });
+  await mkdir(new URL("dist/", root), { recursive: true });
+  await writeFile(new URL(manifestPath, root), manifest);
+  await writeFile(new URL(checksumPath, root), checksum);
+  await writeFile(new URL(`dist/${archiveName}`, root), tar);
 }

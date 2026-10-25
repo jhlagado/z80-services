@@ -4,7 +4,7 @@ import {
   decodeEffectFrame,
   decodeEffectResponse,
   DEFAULT_EFFECT_LIMITS,
-  EffectClient,
+  type EffectClient,
   type EffectCommand,
   type EffectFrame,
   type EffectLimits,
@@ -30,25 +30,36 @@ export class DeferredEffectProvider implements EffectProvider {
   private readonly polls: number;
   private readonly maxTasks: number;
   private nextTask = 1;
-  private readonly tasks = new Map<number, {
-    remaining: number;
-    response: EffectResponse;
-  }>();
+  private readonly tasks = new Map<
+    number,
+    {
+      remaining: number;
+      response: EffectResponse;
+    }
+  >();
+
+  private readonly inner: EffectProvider;
+  private readonly limits: EffectLimits;
 
   constructor(
-    private readonly inner: EffectProvider,
-    private readonly limits: EffectLimits = DEFAULT_EFFECT_LIMITS,
+    inner: EffectProvider,
+    limits: EffectLimits = DEFAULT_EFFECT_LIMITS,
     options: DeferredEffectOptions = {},
   ) {
+    this.inner = inner;
+    this.limits = limits;
     this.polls = options.polls ?? 1;
     this.maxTasks = options.maxTasks ?? 64;
     if (
-      !Number.isInteger(this.polls) || this.polls < 0 || this.polls > 0xffff
+      !Number.isInteger(this.polls) ||
+      this.polls < 0 ||
+      this.polls > 0xffff
     ) {
       throw new RangeError("Deferred effect polls must be 0..65535");
     }
     if (
-      !Number.isInteger(this.maxTasks) || this.maxTasks < 1 ||
+      !Number.isInteger(this.maxTasks) ||
+      this.maxTasks < 1 ||
       this.maxTasks > 0xffff
     ) {
       throw new RangeError("Deferred effect maxTasks must be 1..65535");
@@ -78,9 +89,10 @@ export class DeferredEffectProvider implements EffectProvider {
       this.tasks.set(task, { remaining: this.polls, response: innerResponse });
       return this.response(request, { status: "pending", task });
     } catch (error) {
-      const protocol = error instanceof EffectProtocolError
-        ? error
-        : new EffectProtocolError("malformed", String(error));
+      const protocol =
+        error instanceof EffectProtocolError
+          ? error
+          : new EffectProtocolError("malformed", String(error));
       return this.response(request, {
         status: "error",
         code: protocol.code,
@@ -146,10 +158,10 @@ export type EffectTaskStatus = "ready" | "waiting" | "done" | "failed";
 
 export type EffectTaskAction<State> =
   | {
-    readonly type: "request";
-    readonly state: State;
-    readonly command: EffectCommand;
-  }
+      readonly type: "request";
+      readonly state: State;
+      readonly command: EffectCommand;
+    }
   | { readonly type: "yield"; readonly state: State }
   | { readonly type: "done"; readonly state: State };
 
@@ -195,11 +207,13 @@ export class CooperativeEffectScheduler<State> {
   private readonly ready: number[] = [];
   private readonly waiting: number[] = [];
   private preferWaiting = false;
+  private readonly client: EffectClient;
 
   constructor(
-    private readonly client: EffectClient,
+    client: EffectClient,
     limits: EffectSchedulerLimits = DEFAULT_EFFECT_SCHEDULER_LIMITS,
   ) {
+    this.client = client;
     this.limits = validateSchedulerLimits(limits);
   }
 

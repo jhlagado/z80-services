@@ -1,10 +1,11 @@
+import test from "node:test";
 import assert from "node:assert/strict";
 import projection from "../conformance/projections/nucleus-byte-gateway-v0.json" with {
   type: "json",
 };
 import { BYTE_GATEWAY_PROFILE, STATUS } from "./contract.ts";
 
-Deno.test("Nucleus projects its six byte services onto the shared gateway", () => {
+test("Nucleus projects its six byte services onto the shared gateway", () => {
   assert.equal(projection.schema, "z80-services-projection-v1");
   assert.equal(projection.providerContract, "z80-services-v0");
   assert.equal(projection.profile, "byteGateway");

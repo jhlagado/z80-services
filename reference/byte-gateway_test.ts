@@ -1,3 +1,4 @@
+import test from "node:test";
 import assert from "node:assert/strict";
 import vectors from "../conformance/vectors/byte-gateway-v0.json" with {
   type: "json",
@@ -5,15 +6,21 @@ import vectors from "../conformance/vectors/byte-gateway-v0.json" with {
 import { MemoryByteGateway } from "./byte-gateway.ts";
 import { BYTE_GATEWAY_PROFILE } from "./contract.ts";
 
-Deno.test("memory byte gateway passes the language-neutral vectors", () => {
+function reset(gateway: MemoryByteGateway) {
+  gateway.reset();
+  return { status: 0 };
+}
+
+test("memory byte gateway passes the language-neutral vectors", () => {
   assert.equal(vectors.profile, "byteGateway");
   assert.equal(vectors.version, BYTE_GATEWAY_PROFILE.version);
   for (const vector of vectors.vectors) {
     const gateway = new MemoryByteGateway(vector.initial);
     for (const [index, step] of vector.steps.entries()) {
-      const result = step.operation === "reset"
-        ? (gateway.reset(), { status: 0 })
-        : gateway.dispatch(step.operation, step.arguments);
+      const result =
+        step.operation === "reset"
+          ? reset(gateway)
+          : gateway.dispatch(step.operation, step.arguments);
       assert.deepEqual(
         result,
         step.result,
@@ -28,7 +35,7 @@ Deno.test("memory byte gateway passes the language-neutral vectors", () => {
   }
 });
 
-Deno.test("numeric operation identities dispatch through the same contract", () => {
+test("numeric operation identities dispatch through the same contract", () => {
   const gateway = new MemoryByteGateway({ input: [0x41] });
   assert.deepEqual(
     gateway.dispatch(BYTE_GATEWAY_PROFILE.operations.readInputByte),
@@ -36,7 +43,7 @@ Deno.test("numeric operation identities dispatch through the same contract", () 
   );
 });
 
-Deno.test("invalid initial state is rejected before a run begins", () => {
+test("invalid initial state is rejected before a run begins", () => {
   assert.throws(() => new MemoryByteGateway({ input: [0x100] }), /non-byte/);
   assert.throws(
     () =>

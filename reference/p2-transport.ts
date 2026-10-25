@@ -5,8 +5,8 @@ export const EFFECT_MAGIC = Object.freeze([0x1b, 0x7e]);
 export const EFFECT_HEADER_BYTES = 9;
 export const EFFECT_TRAILER_BYTES = 2;
 export const MAX_EFFECT_PAYLOAD_BYTES = 1024;
-export const MAX_EFFECT_FRAME_BYTES = EFFECT_HEADER_BYTES +
-  MAX_EFFECT_PAYLOAD_BYTES + EFFECT_TRAILER_BYTES;
+export const MAX_EFFECT_FRAME_BYTES =
+  EFFECT_HEADER_BYTES + MAX_EFFECT_PAYLOAD_BYTES + EFFECT_TRAILER_BYTES;
 export const MAX_EFFECT_EVENT_QUEUE = 64;
 
 export type EffectFrameKind = "request" | "response" | "event";
@@ -36,19 +36,22 @@ export type EffectProtocolErrorCode =
   | "device";
 
 export class EffectProtocolError extends Error {
-  constructor(
-    readonly code: EffectProtocolErrorCode,
-    message: string,
-  ) {
+  readonly code: EffectProtocolErrorCode;
+
+  constructor(code: EffectProtocolErrorCode, message: string) {
     super(message);
+    this.code = code;
     this.name = "EffectProtocolError";
   }
 }
 
 /** Raised when the synchronous convenience API meets a deferred response. */
 export class EffectPendingError extends Error {
-  constructor(readonly task: number) {
+  readonly task: number;
+
+  constructor(task: number) {
     super(`Effect request is pending on task ${task}`);
+    this.task = task;
     this.name = "EffectPendingError";
   }
 }
@@ -95,8 +98,9 @@ function checkLimits(limits: EffectLimits): void {
   }
   if (
     limits.maxFrameBytes <
-      EFFECT_HEADER_BYTES + Math.min(limits.maxPayloadBytes, 0xffff) +
-        EFFECT_TRAILER_BYTES
+    EFFECT_HEADER_BYTES +
+      Math.min(limits.maxPayloadBytes, 0xffff) +
+      EFFECT_TRAILER_BYTES
   ) {
     throw new RangeError("maxFrameBytes cannot hold maxPayloadBytes");
   }
@@ -147,8 +151,8 @@ export function encodeEffectFrame(
   limits: EffectLimits = DEFAULT_EFFECT_LIMITS,
 ): Uint8Array {
   validateFrame(frame, limits);
-  const size = EFFECT_HEADER_BYTES + frame.payload.length +
-    EFFECT_TRAILER_BYTES;
+  const size =
+    EFFECT_HEADER_BYTES + frame.payload.length + EFFECT_TRAILER_BYTES;
   if (size > limits.maxFrameBytes) {
     throw new EffectProtocolError(
       "capacity",
@@ -240,8 +244,10 @@ export function decodeEffectFrame(
 /** Incremental decoder used by serial transports that deliver partial chunks. */
 export class EffectFrameDecoder {
   private buffer = new Uint8Array(0);
+  private readonly limits: EffectLimits;
 
-  constructor(private readonly limits: EffectLimits = DEFAULT_EFFECT_LIMITS) {
+  constructor(limits: EffectLimits = DEFAULT_EFFECT_LIMITS) {
+    this.limits = limits;
     checkLimits(limits);
   }
 
@@ -267,8 +273,8 @@ export class EffectFrameDecoder {
         );
       }
       const payloadLength = readWord(this.buffer, 7);
-      const expected = EFFECT_HEADER_BYTES + payloadLength +
-        EFFECT_TRAILER_BYTES;
+      const expected =
+        EFFECT_HEADER_BYTES + payloadLength + EFFECT_TRAILER_BYTES;
       if (
         payloadLength > this.limits.maxPayloadBytes ||
         expected > this.limits.maxFrameBytes
@@ -310,16 +316,16 @@ export type EffectReadMode = "normalized" | "raw";
 export type EffectCommand =
   | { readonly type: "text"; readonly bytes: Uint8Array }
   | {
-    readonly type: "control";
-    readonly capability: number;
-    readonly bytes: Uint8Array;
-  }
+      readonly type: "control";
+      readonly capability: number;
+      readonly bytes: Uint8Array;
+    }
   | { readonly type: "read-event"; readonly mode: EffectReadMode }
   | {
-    readonly type: "query";
-    readonly capability: number;
-    readonly bytes: Uint8Array;
-  }
+      readonly type: "query";
+      readonly capability: number;
+      readonly bytes: Uint8Array;
+    }
   | { readonly type: "poll"; readonly task: number };
 
 function checkedBytes(value: Uint8Array, label: string): Uint8Array {
@@ -358,15 +364,19 @@ export function encodeEffectCommand(
   correlation: number,
   limits: EffectLimits = DEFAULT_EFFECT_LIMITS,
 ): Uint8Array {
-  const opcode = command.type === "read-event"
-    ? EffectCommandOpcode.readEvent
-    : EffectCommandOpcode[command.type];
-  return encodeEffectFrame({
-    kind: "request",
-    opcode,
-    correlation,
-    payload: commandPayload(command),
-  }, limits);
+  const opcode =
+    command.type === "read-event"
+      ? EffectCommandOpcode.readEvent
+      : EffectCommandOpcode[command.type];
+  return encodeEffectFrame(
+    {
+      kind: "request",
+      opcode,
+      correlation,
+      payload: commandPayload(command),
+    },
+    limits,
+  );
 }
 
 export function decodeEffectCommand(frame: EffectFrame): EffectCommand {
@@ -389,9 +399,8 @@ export function decodeEffectCommand(frame: EffectFrame): EffectCommand {
         );
       }
       return {
-        type: frame.opcode === EffectCommandOpcode.control
-          ? "control"
-          : "query",
+        type:
+          frame.opcode === EffectCommandOpcode.control ? "control" : "query",
         capability: readWord(payload, 0),
         bytes: payload.slice(2),
       };
@@ -436,10 +445,10 @@ export type EffectResponse =
   | { readonly status: "empty" }
   | { readonly status: "pending"; readonly task: number }
   | {
-    readonly status: "error";
-    readonly code: EffectProtocolErrorCode;
-    readonly message: string;
-  };
+      readonly status: "error";
+      readonly code: EffectProtocolErrorCode;
+      readonly message: string;
+    };
 
 export const EffectResponseStatus = Object.freeze({
   ok: 0,
@@ -447,47 +456,41 @@ export const EffectResponseStatus = Object.freeze({
   error: 2,
   pending: 3,
 });
-const responseStatusName: Record<
-  number,
-  "ok" | "empty" | "error" | "pending"
-> = {
-  0: "ok",
-  1: "empty",
-  2: "error",
-  3: "pending",
-};
-export const EffectErrorCode = Object.freeze(
+const responseStatusName: Record<number, "ok" | "empty" | "error" | "pending"> =
   {
-    malformed: 0,
-    version: 1,
-    truncated: 2,
-    checksum: 3,
-    capacity: 4,
-    unsupported: 5,
-    "invalid-command": 6,
-    "invalid-event": 7,
-    empty: 8,
-    device: 9,
-  } satisfies Record<EffectProtocolErrorCode, number>,
-);
-const errorCodeList = Object.freeze(
-  [
-    "malformed",
-    "version",
-    "truncated",
-    "checksum",
-    "capacity",
-    "unsupported",
-    "invalid-command",
-    "invalid-event",
-    "empty",
-    "device",
-  ] satisfies EffectProtocolErrorCode[],
-);
+    0: "ok",
+    1: "empty",
+    2: "error",
+    3: "pending",
+  };
+export const EffectErrorCode = Object.freeze({
+  malformed: 0,
+  version: 1,
+  truncated: 2,
+  checksum: 3,
+  capacity: 4,
+  unsupported: 5,
+  "invalid-command": 6,
+  "invalid-event": 7,
+  empty: 8,
+  device: 9,
+} satisfies Record<EffectProtocolErrorCode, number>);
+const errorCodeList = Object.freeze([
+  "malformed",
+  "version",
+  "truncated",
+  "checksum",
+  "capacity",
+  "unsupported",
+  "invalid-command",
+  "invalid-event",
+  "empty",
+  "device",
+] satisfies EffectProtocolErrorCode[]);
 
 function errorCodeIndex(code: EffectProtocolErrorCode): number {
   const index = errorCodeList.indexOf(code);
-  return index < 0 ? 0 : index;
+  return Math.max(index, 0);
 }
 
 export function encodeEffectResponse(
@@ -515,12 +518,15 @@ export function encodeEffectResponse(
     payload[1] = errorCodeIndex(response.code);
     payload.set(message, 2);
   }
-  return encodeEffectFrame({
-    kind: "response",
-    opcode,
-    correlation,
-    payload,
-  }, limits);
+  return encodeEffectFrame(
+    {
+      kind: "response",
+      opcode,
+      correlation,
+      payload,
+    },
+    limits,
+  );
 }
 
 export function decodeEffectResponse(frame: EffectFrame): EffectResponse {
@@ -585,59 +591,59 @@ export function decodeEffectResponse(frame: EffectFrame): EffectResponse {
 
 export type EffectEvent =
   | {
-    readonly type: "text";
-    readonly source: number;
-    readonly sequence: number;
-    readonly text: string;
-  }
+      readonly type: "text";
+      readonly source: number;
+      readonly sequence: number;
+      readonly text: string;
+    }
   | {
-    readonly type: "key";
-    readonly source: number;
-    readonly sequence: number;
-    readonly key: string;
-    readonly modifiers: number;
-    readonly text?: string;
-  }
+      readonly type: "key";
+      readonly source: number;
+      readonly sequence: number;
+      readonly key: string;
+      readonly modifiers: number;
+      readonly text?: string;
+    }
   | {
-    readonly type: "pointer";
-    readonly source: number;
-    readonly sequence: number;
-    readonly x: number;
-    readonly y: number;
-    readonly buttons: number;
-  }
+      readonly type: "pointer";
+      readonly source: number;
+      readonly sequence: number;
+      readonly x: number;
+      readonly y: number;
+      readonly buttons: number;
+    }
   | {
-    readonly type: "timer";
-    readonly source: number;
-    readonly sequence: number;
-    readonly ticks: number;
-  }
+      readonly type: "timer";
+      readonly source: number;
+      readonly sequence: number;
+      readonly ticks: number;
+    }
   | {
-    readonly type: "device";
-    readonly source: number;
-    readonly sequence: number;
-    readonly status: number;
-    readonly bytes: Uint8Array;
-  }
+      readonly type: "device";
+      readonly source: number;
+      readonly sequence: number;
+      readonly status: number;
+      readonly bytes: Uint8Array;
+    }
   | {
-    readonly type: "data";
-    readonly source: number;
-    readonly sequence: number;
-    readonly bytes: Uint8Array;
-  }
+      readonly type: "data";
+      readonly source: number;
+      readonly sequence: number;
+      readonly bytes: Uint8Array;
+    }
   | {
-    readonly type: "raw";
-    readonly source: number;
-    readonly sequence: number;
-    readonly bytes: Uint8Array;
-  }
+      readonly type: "raw";
+      readonly source: number;
+      readonly sequence: number;
+      readonly bytes: Uint8Array;
+    }
   | {
-    readonly type: "error";
-    readonly source: number;
-    readonly sequence: number;
-    readonly code: number;
-    readonly message: string;
-  };
+      readonly type: "error";
+      readonly source: number;
+      readonly sequence: number;
+      readonly code: number;
+      readonly message: string;
+    };
 
 export const EffectEventTypeCode = Object.freeze({
   text: 1,
@@ -728,9 +734,8 @@ export function encodeEffectEvent(
     size += 2 + textData.length;
   } else if (event.type === "key") {
     keyData = utf8(event.key, "event key");
-    keyText = event.text === undefined
-      ? undefined
-      : utf8(event.text, "event text");
+    keyText =
+      event.text === undefined ? undefined : utf8(event.text, "event text");
     integer(event.modifiers, "event modifiers", 0xff);
     size += 1 + 2 + keyData.length + 2 + (keyText?.length ?? 0);
   } else if (event.type === "pointer") {
@@ -892,8 +897,12 @@ export function decodeEffectEvent(payload: Uint8Array): EffectEvent {
       type,
       source,
       sequence,
-      ticks: (payload[cursor]! | (payload[cursor + 1]! << 8) |
-        (payload[cursor + 2]! << 16) | (payload[cursor + 3]! << 24)) >>> 0,
+      ticks:
+        (payload[cursor]! |
+          (payload[cursor + 1]! << 8) |
+          (payload[cursor + 2]! << 16) |
+          (payload[cursor + 3]! << 24)) >>>
+        0,
     };
   }
   if (type === "device") {
@@ -959,10 +968,16 @@ export interface EffectTransport {
 
 /** Adapter used by tests and modern harnesses to exercise the wire contract. */
 export class ProviderTransport implements EffectTransport {
+  private readonly provider: EffectProvider;
+  private readonly limits: EffectLimits;
+
   constructor(
-    private readonly provider: EffectProvider,
-    private readonly limits: EffectLimits = DEFAULT_EFFECT_LIMITS,
-  ) {}
+    provider: EffectProvider,
+    limits: EffectLimits = DEFAULT_EFFECT_LIMITS,
+  ) {
+    this.provider = provider;
+    this.limits = limits;
+  }
 
   transact(request: Uint8Array): Uint8Array {
     const frame = decodeEffectFrame(request, this.limits);
@@ -973,17 +988,21 @@ export class ProviderTransport implements EffectTransport {
 /** Synchronous client: one request is sent and one response is received. */
 export class EffectClient {
   private nextCorrelation = 1;
+  private readonly transport: EffectTransport;
+  private readonly limits: EffectLimits;
 
   constructor(
-    private readonly transport: EffectTransport,
-    private readonly limits: EffectLimits = DEFAULT_EFFECT_LIMITS,
-  ) {}
+    transport: EffectTransport,
+    limits: EffectLimits = DEFAULT_EFFECT_LIMITS,
+  ) {
+    this.transport = transport;
+    this.limits = limits;
+  }
 
   request(command: EffectCommand): EffectResponse {
     const correlation = this.nextCorrelation;
-    this.nextCorrelation = this.nextCorrelation === 0xffff
-      ? 1
-      : this.nextCorrelation + 1;
+    this.nextCorrelation =
+      this.nextCorrelation === 0xffff ? 1 : this.nextCorrelation + 1;
     const request = encodeEffectCommand(command, correlation, this.limits);
     const responseFrame = decodeEffectFrame(
       this.transport.transact(request),
@@ -1069,8 +1088,10 @@ export class RecordingEffectProvider implements EffectProvider {
   readonly controls: RecordedControl[] = [];
   private readonly events: EffectEvent[] = [];
   private readonly queries = new Map<string, Uint8Array>();
+  private readonly limits: EffectLimits;
 
-  constructor(private readonly limits: EffectLimits = DEFAULT_EFFECT_LIMITS) {
+  constructor(limits: EffectLimits = DEFAULT_EFFECT_LIMITS) {
+    this.limits = limits;
     checkLimits(limits);
   }
 
@@ -1143,9 +1164,10 @@ export class RecordingEffectProvider implements EffectProvider {
         const reply = this.queries.get(
           `${command.capability}:${hex(command.bytes)}`,
         );
-        response = reply === undefined
-          ? { status: "error", code: "device", message: "No query reply" }
-          : { status: "ok", bytes: reply.slice() };
+        response =
+          reply === undefined
+            ? { status: "error", code: "device", message: "No query reply" }
+            : { status: "ok", bytes: reply.slice() };
       }
       return decodeEffectFrame(
         encodeEffectResponse(
@@ -1157,9 +1179,10 @@ export class RecordingEffectProvider implements EffectProvider {
         this.limits,
       );
     } catch (error) {
-      const protocol = error instanceof EffectProtocolError
-        ? error
-        : new EffectProtocolError("malformed", String(error));
+      const protocol =
+        error instanceof EffectProtocolError
+          ? error
+          : new EffectProtocolError("malformed", String(error));
       return decodeEffectFrame(
         encodeEffectResponse(
           { status: "error", code: protocol.code, message: protocol.message },

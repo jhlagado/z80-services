@@ -49,8 +49,8 @@ function bytes(
 ): number[] {
   const result = [...(values ?? [])];
   if (
-    result.some((value) =>
-      !Number.isInteger(value) || value < 0 || value > 0xff
+    result.some(
+      (value) => !Number.isInteger(value) || value < 0 || value > 0xff,
     )
   ) {
     throw new TypeError(`${name} contains a non-byte value`);
@@ -67,16 +67,18 @@ function capacity(name: string, value: number | undefined): number {
 }
 
 function byte(value: unknown): number | undefined {
-  return Number.isInteger(value) && (value as number) >= 0 &&
-      (value as number) <= 0xff
-    ? value as number
+  return Number.isInteger(value) &&
+    (value as number) >= 0 &&
+    (value as number) <= 0xff
+    ? (value as number)
     : undefined;
 }
 
 function word(value: unknown): number | undefined {
-  return Number.isInteger(value) && (value as number) >= 0 &&
-      (value as number) <= 0xffff
-    ? value as number
+  return Number.isInteger(value) &&
+    (value as number) >= 0 &&
+    (value as number) <= 0xffff
+    ? (value as number)
     : undefined;
 }
 
@@ -123,9 +125,8 @@ export class MemoryByteGateway implements ByteGateway {
     operation: string | number,
     arguments_: Readonly<Record<string, unknown>> = {},
   ): GatewayResult {
-    const name = typeof operation === "number"
-      ? operationNames.get(operation)
-      : operation;
+    const name =
+      typeof operation === "number" ? operationNames.get(operation) : operation;
     switch (name) {
       case "readInputByte":
         return this.readInputByte();
@@ -178,7 +179,8 @@ export class MemoryByteGateway implements ByteGateway {
     const value = byte(argument);
     if (value === undefined) return { status: STATUS.invalid };
     if (
-      this.#failOutputWrites || this.#output.length === this.#outputCapacity
+      this.#failOutputWrites ||
+      this.#output.length === this.#outputCapacity
     ) {
       return { status: STATUS.outputFailure };
     }
@@ -220,7 +222,8 @@ export class MemoryByteGateway implements ByteGateway {
   private seekStorageOutput(argument: unknown): GatewayResult {
     const offset = word(argument);
     if (
-      offset === undefined || this.#failStorageSeek ||
+      offset === undefined ||
+      this.#failStorageSeek ||
       offset > this.#storageOutput.length
     ) {
       return {

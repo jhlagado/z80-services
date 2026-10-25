@@ -1,3 +1,4 @@
+import test from "node:test";
 import assert from "node:assert/strict";
 import {
   decodeEffectCommand,
@@ -19,7 +20,7 @@ import {
   DeferredEffectProvider,
 } from "./p2-scheduler.ts";
 
-Deno.test("pending responses and poll commands round-trip on the wire", () => {
+test("pending responses and poll commands round-trip on the wire", () => {
   const pollFrame = decodeEffectFrame(
     encodeEffectCommand({ type: "poll", task: 42 }, 8),
   );
@@ -55,14 +56,12 @@ Deno.test("pending responses and poll commands round-trip on the wire", () => {
   );
 });
 
-Deno.test("deferred provider releases a reply after deterministic polls", () => {
+test("deferred provider releases a reply after deterministic polls", () => {
   const inner = new RecordingEffectProvider();
   inner.setQueryReply(7, Uint8Array.of(1), Uint8Array.of(0x41));
-  const provider = new DeferredEffectProvider(
-    inner,
-    DEFAULT_EFFECT_LIMITS,
-    { polls: 1 },
-  );
+  const provider = new DeferredEffectProvider(inner, DEFAULT_EFFECT_LIMITS, {
+    polls: 1,
+  });
   const client = new EffectClient(new ProviderTransport(provider));
 
   const first = client.request({
@@ -78,7 +77,7 @@ Deno.test("deferred provider releases a reply after deterministic polls", () => 
   });
 });
 
-Deno.test("the synchronous convenience methods identify pending input", () => {
+test("the synchronous convenience methods identify pending input", () => {
   const inner = new RecordingEffectProvider();
   inner.queueEvent({
     type: "key",
@@ -87,11 +86,9 @@ Deno.test("the synchronous convenience methods identify pending input", () => {
     key: "ArrowUp",
     modifiers: 0,
   });
-  const provider = new DeferredEffectProvider(
-    inner,
-    DEFAULT_EFFECT_LIMITS,
-    { polls: 0 },
-  );
+  const provider = new DeferredEffectProvider(inner, DEFAULT_EFFECT_LIMITS, {
+    polls: 0,
+  });
   const client = new EffectClient(new ProviderTransport(provider));
   assert.throws(
     () => client.readEvent(),
@@ -106,21 +103,16 @@ interface TaskState {
   readonly turns: number;
 }
 
-Deno.test("round-robin scheduler interleaves waiting tasks", () => {
+test("round-robin scheduler interleaves waiting tasks", () => {
   const inner = new RecordingEffectProvider();
   inner.setQueryReply(9, Uint8Array.of(0x10), Uint8Array.of(0x41));
   inner.setQueryReply(9, Uint8Array.of(0x20), Uint8Array.of(0x42));
-  const provider = new DeferredEffectProvider(
-    inner,
-    DEFAULT_EFFECT_LIMITS,
-    { polls: 1 },
-  );
+  const provider = new DeferredEffectProvider(inner, DEFAULT_EFFECT_LIMITS, {
+    polls: 1,
+  });
   const client = new EffectClient(new ProviderTransport(provider));
   const order: string[] = [];
-  const runner = (
-    state: TaskState,
-    response: EffectResponse | undefined,
-  ) => {
+  const runner = (state: TaskState, response: EffectResponse | undefined) => {
     order.push(state.name);
     if (response === undefined) {
       return {
@@ -180,7 +172,7 @@ Deno.test("round-robin scheduler interleaves waiting tasks", () => {
   );
 });
 
-Deno.test("scheduler exposes failed tasks and enforces its limits", () => {
+test("scheduler exposes failed tasks and enforces its limits", () => {
   const client = new EffectClient(
     new ProviderTransport(new RecordingEffectProvider()),
   );
@@ -221,13 +213,11 @@ Deno.test("scheduler exposes failed tasks and enforces its limits", () => {
   );
 });
 
-Deno.test("scheduler polls waiting work fairly beside a yielding task", () => {
+test("scheduler polls waiting work fairly beside a yielding task", () => {
   const inner = new RecordingEffectProvider();
-  const provider = new DeferredEffectProvider(
-    inner,
-    DEFAULT_EFFECT_LIMITS,
-    { polls: 0 },
-  );
+  const provider = new DeferredEffectProvider(inner, DEFAULT_EFFECT_LIMITS, {
+    polls: 0,
+  });
   const client = new EffectClient(new ProviderTransport(provider));
   const scheduler = new CooperativeEffectScheduler<{ readonly turns: number }>(
     client,

@@ -13,8 +13,8 @@
     },
     {
       "path": "README.md",
-      "size": 2940,
-      "sha256": "ff8c7b3ad35f502d120bdddf7752cfa7e22e55c8a9b2644edccb69636ec7774b"
+      "size": 3675,
+      "sha256": "dd4eba56dc5d00a9841f74299636389089388a0a28eb7eac8f79892b1650ec95"
     },
     {
       "path": "conformance/projections/nucleus-byte-gateway-v0.json",
@@ -63,8 +63,8 @@
     },
     {
       "path": "docs/dependencies.md",
-      "size": 1716,
-      "sha256": "5d644b096e8b6411bd7c3ea44101c27f9624df51f52272630ae63966221f779a"
+      "size": 1801,
+      "sha256": "d8f478ddbfc7fa91836e4b07174e93804f7617bde5a5ef87e33f45890a87ffa0"
     },
     {
       "path": "docs/target-profile-v0.md",
@@ -103,8 +103,8 @@
     },
     {
       "path": "reference/byte-gateway.ts",
-      "size": 7413,
-      "sha256": "e18750ba82ad574ebebe49153591f3e9c95a6df7d72a5e49bd5090c41ba013d7"
+      "size": 7429,
+      "sha256": "71b01b61dda9bb177f0fcb531684fdd6bca646fd09ac4bcecea91a2bff5ba6c7"
     },
     {
       "path": "reference/contract.ts",

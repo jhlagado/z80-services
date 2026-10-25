@@ -45,9 +45,23 @@ while [`docs/p2-transport.md`](docs/p2-transport.md) and the `reference/p2-*`
 files preserve the existing framed-transport experiment. P2 is one possible
 transport; it is not the service abstraction itself.
 
-Run `npm ci` once, then `deno task verify` to check generated projections,
-reference providers and native ATOM execution. Measured byte and cycle accounts
-are fixed by [`proofs/byte-gateway-v0.json`](proofs/byte-gateway-v0.json).
+The host tooling runs on Node 22.18 or later; Node 24 is the reference. Node
+runs the TypeScript sources directly by stripping types, so there is no build
+step. Run `npm ci` once, then `npm run verify` to check formatting, lint, types,
+generated projections, the release manifest, reference providers and native
+ATOM execution. Measured byte and cycle accounts are fixed by
+[`proofs/byte-gateway-v0.json`](proofs/byte-gateway-v0.json).
+
+| Script | Purpose |
+| --- | --- |
+| `npm run generate` | regenerate `reference/contract.ts` and the ATOM include from the contract |
+| `npm run release` | rebuild the release manifest, checksum and `dist/` tar |
+| `npm test` | run the reference and native tests with `node --test` |
+| `npm run check` | type-check with `tsc` |
+| `npm run verify` | everything above in check mode, plus Biome format and lint |
+
+Each script that touches files runs under Node's permission model with the
+narrowest read and write grants it needs.
 
 ## Distribution
 
